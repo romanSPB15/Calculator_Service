@@ -15,7 +15,6 @@ var client http.Client
 
 type Expression struct {
 	Data   string `json:"data"`
-	ID     uint32
 	Status string
 	Result float64
 }
@@ -53,7 +52,7 @@ func showID(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, fmt.Sprintf("ID=%v", m["id"]))
 }
 
-type APIGetExpressionsResult struct { // Ответ API при получении списка выражений
+type aAPIGetExpressionsResult struct { // Ответ API при получении списка выражений
 	Expressions []Expression `json:"expressions"`
 }
 
@@ -62,7 +61,7 @@ func expressions(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	var res APIGetExpressionsResult
+	var res aAPIGetExpressionsResult
 	defer resp.Body.Close()
 	err = json.NewDecoder(resp.Body).Decode(&res) // Декодируем тело ответа
 	if err != nil {
@@ -74,9 +73,55 @@ func expressions(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, res.Expressions)
 }
+
+func expression(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, dir.GetTemplateFile("expression.html"))
+}
+
+type aAPIGetExpressionResult struct { // Ответ API при получении списка выражений
+	Expression Expression `json:"expression"`
+}
+
+func showExpression(w http.ResponseWriter, r *http.Request) {
+	url := fmt.Sprintf("http://localhost:8080/api/v1/expressions/%s", r.FormValue("id"))
+	resp, err := client.Get(url) // Делаем запрос
+	if err != nil {
+		panic(err)
+	}
+	if resp.StatusCode == 404 {
+		http.ServeFile(w, r, dir.GetTemplateFile("notfoundexpr.html"))
+		return
+	}
+	var res aAPIGetExpressionResult
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&res) // Декодируем тело ответа
+	if err != nil {
+		panic(err)
+	}
+	tmpl, err := template.ParseFiles(dir.GetTemplateFile("showexpr.html"))
+	if err != nil {
+		panic(err)
+	}
+	res.Expression.Status = "Status: " + res.Expression.Status
+	var resExpr struct {
+		Status string
+		Data   string
+		Result string
+	}
+	resExpr.Data = "Data: " + res.Expression.Data
+	resExpr.Status = res.Expression.Status
+	resExpr.Result = fmt.Sprintf("Result: %F", res.Expression.Result)
+	err = tmpl.Execute(w, resExpr)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func HandleToRouter(router *mux.Router) {
 	router.HandleFunc("/api/v1/web", index)
 	router.HandleFunc("/api/v1/web/calculate", calculate)
 	router.HandleFunc("/api/v1/web/expressions", expressions)
 	router.HandleFunc("/api/v1/web/showid", showID)
+	router.HandleFunc("/api/v1/web/expression", expression)
+	router.HandleFunc("/api/v1/web/showexpr", showExpression)
 }

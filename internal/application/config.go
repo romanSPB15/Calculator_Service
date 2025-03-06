@@ -14,7 +14,6 @@ type config struct {
 }
 
 func newConfig() *config {
-	fmt.Println(dir.JsonFile())
 	res := new(config)
 	cf, err := os.Open(dir.JsonFile())
 	if err != nil {
@@ -23,7 +22,7 @@ func newConfig() *config {
 	decoder := json.NewDecoder(cf)
 	err = decoder.Decode(res)
 	if err != nil {
-		panic(fmt.Sprintf("cannot decode config file: %v", err))
+		panic(fmt.Errorf("cannot decode config file: %v", err))
 	}
 	return res
 }
