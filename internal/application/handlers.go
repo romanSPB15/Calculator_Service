@@ -96,7 +96,6 @@ func (a *Application) GetExpressionsHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	w.Write(data)
-	w.WriteHeader(http.StatusOK)
 }
 
 func (a *Application) TaskHandler(w http.ResponseWriter, r *http.Request) {
