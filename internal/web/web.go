@@ -21,11 +21,11 @@ type Expression struct {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, dir.Get_template_file("index.html"))
+	http.ServeFile(w, r, dir.GetTemplateFile("index.html"))
 }
 
 func calculate(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, dir.Get_template_file("calc.html"))
+	http.ServeFile(w, r, dir.GetTemplateFile("calc.html"))
 }
 
 func showID(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func showID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	tmpl, err := template.ParseFiles(dir.Get_template_file("showid.html"))
+	tmpl, err := template.ParseFiles(dir.GetTemplateFile("showid.html"))
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func expressions(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	tmpl, err := template.ParseFiles(dir.Get_template_file("expressions.html"))
+	tmpl, err := template.ParseFiles(dir.GetTemplateFile("expressions.html"))
 	if err != nil {
 		panic(err)
 	}

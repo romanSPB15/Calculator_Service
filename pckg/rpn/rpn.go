@@ -281,9 +281,13 @@ func Calc(expression string, tasks *ConcurrentTaskMap, debug bool) (res Expressi
 				case '/':
 					uuid := uuid.New()
 					id := uuid.ID()
+					arg2 := convertString(b)
+					if arg2 == 0 {
+						return 0, Errordel
+					}
 					t := Task{
 						Arg1:          res,
-						Arg2:          convertString(b),
+						Arg2:          arg2,
 						Operation:     "/",
 						Status:        "Wait",
 						OperationTime: TIME_DIVISIONS_MS,

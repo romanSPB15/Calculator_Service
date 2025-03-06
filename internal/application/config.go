@@ -14,9 +14,9 @@ type config struct {
 }
 
 func newConfig() *config {
-	fmt.Println(dir.Json_file())
+	fmt.Println(dir.JsonFile())
 	res := new(config)
-	cf, err := os.Open(dir.Json_file())
+	cf, err := os.Open(dir.JsonFile())
 	if err != nil {
 		panic("cannot open config file")
 	}

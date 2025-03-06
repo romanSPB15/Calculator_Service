@@ -14,6 +14,6 @@ func templates() string { // Получаем директорию папки te
 	return dir + `templates\` // .\templates\
 }
 
-func Get_template_file(name string) string { // Получаем полную директорию нужного файла
+func GetTemplateFile(name string) string { // Получаем полную директорию нужного файла
 	return templates() + name // .\templates\file.html
 }

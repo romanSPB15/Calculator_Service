@@ -10,6 +10,49 @@ import (
 	"github.com/romanSPB15/Calculator_Service/pckg/rpn"
 )
 
+const (
+	WaitStatus        = "Wait"
+	OKStatus          = "OK"
+	CalculationStatus = "Calculation"
+)
+
+// Выражение
+type Expression struct {
+	Data   string  `json:"data"`
+	Status string  `json:"status"`
+	Result float64 `json:"result"`
+}
+
+// Выражение с ID
+type ExpressionWithID struct {
+	ID IDExpression `json:"id"`
+	Expression
+}
+
+// ID выражения
+type IDExpression = uint32
+
+type GetExpressionHandlerResult struct {
+	Expression ExpressionWithID `json:"expression"`
+}
+
+type AddHandlerResult struct {
+	ID uint32 `json:"id"`
+}
+
+type GetExpressionsHandlerResult struct {
+	Expressions []ExpressionWithID `json:"expressions"`
+}
+
+type GetTaskHandlerResult struct {
+	Task rpn.TaskID `json:"task"`
+}
+
+type AgentResult struct {
+	ID     rpn.IDTask `json:"id"`
+	Result float64    `json:"result"`
+}
+
 // Выражения
 var Expressions = make(map[IDExpression]*Expression)
 
@@ -34,7 +77,7 @@ func New() *Application {
 
 // Запуск всей системы
 func (app *Application) RunServer() {
-	rpn.InitEnv(dir.Env_file()) // Иницилизация переменных из среды
+	rpn.InitEnv(dir.EnvFile()) // Иницилизация переменных из среды
 	/* ListenAndServe() закончится только с ошибкой, как и runAgent() */
 	startServer := make(chan struct{}, 1) // Канал запуска оркестратора
 	go func() {
