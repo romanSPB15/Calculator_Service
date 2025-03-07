@@ -1,6 +1,9 @@
 package dir
 
-import "os"
+import (
+	"os"
+	"strings"
+)
 
 // Папка config
 func configFiles() string {
@@ -8,7 +11,7 @@ func configFiles() string {
 	if err != nil {
 		panic(err)
 	}
-	dir = dir[:len(dir)-3]
+	dir, _ = strings.CutSuffix(dir, "cmd")
 	dir += `\config\`
 	return dir
 }
