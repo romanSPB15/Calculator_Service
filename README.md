@@ -338,9 +338,8 @@ curl --location 'localhost/api/v1/abc' \
 Вот ссылки на веб-страницы:
 
  - [Главная страница](http://localhost:8080/api/v1/web)
-
  - [Вычисление выражения](http://localhost:8080/api/v1/web/calculate)
-
- - [Просмотр выражений](http://localhost:8080/api/v1/web/expressions)
+ - [Просмотр всех выражений](http://localhost:8080/api/v1/web/expressions)
+ - [Просмотр выражения по его ID](http://localhost:8080/api/v1/web/expression)
 
 ****ВАЖНО:**** По умолчанию веб-интерфейс выключен. Чтобы его включить, нужно изменить параметр *Веб интерфейс* в **Конфигурация/Другие Параметры**.
