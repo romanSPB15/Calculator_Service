@@ -42,6 +42,7 @@ func (a *Application) AddExpressionHandler(w http.ResponseWriter, r *http.Reques
 			e.Status = ErrorStatus
 		} else {
 			e.Status = "OK"
+			e.Error = ""
 			e.Result = res
 		}
 	}()

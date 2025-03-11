@@ -3,7 +3,6 @@ package application
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -36,7 +35,9 @@ func (a *Application) worker(body io.ReadCloser) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("worker", n, "add result reqest")
+	if a.Config.Debug {
+		log.Println("worker", n, "add result reqest")
+	}
 	resp, err := a.Agent.Post("http://localhost:8080/api/v1/internal/task", "application/json", bytes.NewReader(res))
 	if err != nil {
 		panic(err)
@@ -47,7 +48,7 @@ func (a *Application) worker(body io.ReadCloser) {
 	}
 	a.NumGoroutine--
 	if a.Config.Debug {
-		log.Println("worker comleted", n)
+		log.Println("worker completed", n)
 	}
 }
 
