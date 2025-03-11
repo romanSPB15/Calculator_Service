@@ -85,6 +85,8 @@ type runError struct {
 	object string
 }
 
+const IP = "localhost:8080"
+
 // Запуск всей системы
 func (app *Application) RunServer() {
 	rpn.InitEnv(dir.EnvFile()) // Иницилизация переменных из среды
@@ -92,12 +94,13 @@ func (app *Application) RunServer() {
 	startServer := make(chan struct{}, 1) // Канал запуска оркестратора
 	err := make(chan runError)            // Канал с ошибкой
 	go func() {
-		startServer <- struct{}{}
 		if app.Config.Debug {
 			log.Println("Orkestrator Runned")
 		}
+		startServer <- struct{}{}
+		errIntrf := http.ListenAndServe(IP, nil)
 		err <- runError{
-			http.ListenAndServe("192.168.1.3:8080", nil),
+			errIntrf,
 			"Orkestrator",
 		}
 	}()
@@ -114,14 +117,14 @@ func (app *Application) RunServer() {
 
 	go func() {
 		<-startServer // Ждём, когда запустится оркестратор
+		errIntrf := app.runAgent()
 		err <- runError{
-			app.runAgent(),
+			errIntrf,
 			"Agent",
 		}
 	}()
 	time.Sleep(100 * time.Millisecond)
 	for {
-		fmt.Fprintln(os.Stdout, "Calculator_Service")
 		var cmd string
 		fmt.Scan(&cmd)
 		switch cmd {

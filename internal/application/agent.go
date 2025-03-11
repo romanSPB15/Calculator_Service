@@ -3,6 +3,7 @@ package application
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -15,6 +16,10 @@ import (
 var AgentReqestTime = time.Millisecond * 1
 
 func (a *Application) worker(body io.ReadCloser) {
+	n := a.NumGoroutine
+	if a.Config.Debug {
+		log.Println("worker runned", n)
+	}
 	a.NumGoroutine++
 	defer body.Close()
 	b, err := io.ReadAll(body)
@@ -31,6 +36,7 @@ func (a *Application) worker(body io.ReadCloser) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("worker", n, "add result reqest")
 	resp, err := a.Agent.Post("http://localhost:8080/api/v1/internal/task", "application/json", bytes.NewReader(res))
 	if err != nil {
 		panic(err)
@@ -40,6 +46,9 @@ func (a *Application) worker(body io.ReadCloser) {
 		log.Println(io.ReadAll(resp.Body))
 	}
 	a.NumGoroutine--
+	if a.Config.Debug {
+		log.Println("worker comleted", n)
+	}
 }
 
 // Запуск агента
@@ -60,6 +69,9 @@ func (a *Application) runAgent() error {
 				}
 				if resp.StatusCode == http.StatusNotFound {
 					continue
+				}
+				if a.Config.Debug {
+					log.Println("agent received task")
 				}
 				defer resp.Body.Close()
 				go a.worker(resp.Body)
